@@ -1,5 +1,6 @@
 import { useState } from "react";
 import styled from "styled-components";
+import { Info } from "lucide-react";
 
 declare module "styled-components" {
   export interface DefaultTheme {
@@ -7,6 +8,12 @@ declare module "styled-components" {
     bg: string;
   }
 }
+
+const TitleWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
 
 const Wrapper = styled.div`
   margin-top: 20px;
@@ -22,8 +29,8 @@ const Header = styled.div`
   font-weight: 600;
 
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
 `;
 
 const Content = styled.div`
@@ -40,7 +47,10 @@ export default function Accordion() {
   return (
     <Wrapper>
       <Header onClick={() => setOpen(!open)}>
-        Important Notes
+        <TitleWrapper>
+          <Info size={16} color="#3b82f6" />
+          Important Notes
+        </TitleWrapper>
         <span>{open ? "▲" : "▼"}</span>
       </Header>
 

@@ -7,17 +7,19 @@ import HoldingsTable from "./components/HoldingsTable";
 import PreCard from "./components/PreCard";
 import { fetchHoldings, fetchCapitalGains } from "./services/api";
 import { calculateRealised } from "./utils/calculations";
+import Header from "./components/Header";
+import PageTitle from "./components/PageTitle";
 
 const Container = styled.div`
   padding: 20px;
-  max-width: 1200px;
+  max-width: 1100px;
   margin: auto;
 `;
 
 const SearchInput = styled.input`
   margin-top: 20px;
   padding: 10px 14px;
-  width: 100%;
+  width: 96%;
   border-radius: 8px;
   border: 1px solid #e5e7eb;
 
@@ -29,28 +31,46 @@ const SearchInput = styled.input`
   }
 `;
 
-const Toggle = styled.button`
-  position: fixed;
-  top: 20px;
-  right: 20px;
+// const Toggle = styled.button`
+//   position: fixed;
+//   top: 20px;
+//   right: 20px;
 
-  background: ${({ theme }) => theme.card};
-  color: ${({ theme }) => theme.text};
+//   background: ${({ theme }) => theme.card};
+//   color: ${({ theme }) => theme.text};
 
-  border: 1px solid #e5e7eb;
-  padding: 8px 14px;
-  border-radius: 20px;
+//   border: 1px solid #e5e7eb;
+//   padding: 8px 14px;
+//   border-radius: 20px;
 
-  cursor: pointer;
-  font-size: 13px;
+//   cursor: pointer;
+//   font-size: 13px;
+//   font-weight: 500;
+
+//   box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+
+//   transition: all 0.2s ease;
+
+//   &:hover {
+//     transform: translateY(-2px);
+//   }
+// `;
+
+const ShowMoreBtn = styled.button`
+  margin: 20px auto;
+  display: block;
+
+  background: none;
+  border: none;
+
+  color: #3b82f6;
   font-weight: 500;
+  cursor: pointer;
 
-  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-
-  transition: all 0.2s ease;
+  font-size: 14px;
 
   &:hover {
-    transform: translateY(-2px);
+    text-decoration: underline;
   }
 `;
 
@@ -76,6 +96,7 @@ export default function App({ dark, setDark }: any) {
   const [search, setSearch] = useState("");
   const [sortKey, setSortKey] = useState("");
   const [sortOrder, setSortOrder] = useState("asc");
+  const [visibleCount, setVisibleCount] = useState(6);
 
   useEffect(() => {
     fetchHoldings().then((data) => setHoldings(data as any[]));
@@ -96,13 +117,47 @@ export default function App({ dark, setDark }: any) {
     .includes(search.toLowerCase());
 });
 
-  if (sortKey) {
-    filtered.sort((a, b) => {
-      let A = a[sortKey] || a.stcg.gain;
-      let B = b[sortKey] || b.stcg.gain;
-      return sortOrder === "asc" ? A - B : B - A;
-    });
-  }
+if (sortKey) {
+  filtered.sort((a, b) => {
+    let A: any;
+    let B: any;
+
+    switch (sortKey) {
+      case "coin":
+        A = a.coin.toLowerCase();
+        B = b.coin.toLowerCase();
+        return sortOrder === "asc"
+          ? A.localeCompare(B)
+          : B.localeCompare(A);
+
+      case "price":
+        A = a.currentPrice;
+        B = b.currentPrice;
+        break;
+
+      case "stcg":
+        A = a.stcg?.gain ?? 0;
+        B = b.stcg?.gain ?? 0;
+        break;
+
+      case "ltcg":
+        A = a.ltcg?.gain ?? 0;
+        B = b.ltcg?.gain ?? 0;
+        break;
+
+      case "holding":
+        A = a.totalHolding;
+        B = b.totalHolding;
+        break;
+
+      default:
+        return 0;
+    }
+
+    return sortOrder === "asc" ? A - B : B - A;
+  });
+}
+
     const calculateAfter = () => {
   // if (!cg) return null;
 
@@ -142,39 +197,54 @@ const afterCg = calculateAfter();
   const post = calculateRealised(afterCg);
 
   return (
-    <Container>
-      <Toggle onClick={() => setDark(!dark)}>
-  {dark ? "🌙 Dark" : "☀️ Light"}
-</Toggle>
+    <>
+      <Header dark={dark} setDark={setDark} />
+      <Container>
+        <PageTitle />
+        {/* <Toggle onClick={() => setDark(!dark)}>
+          {dark ? "🌙 Dark" : "☀️ Light"}
+        </Toggle> */}
 
-      <Accordion />
+        <Accordion />
 
-      <CardsWrapper>
-        <PreCard data={cg} title="Pre Harvesting" />
-        <CapitalCard
-  data={afterCg}
-  title="After Harvesting"
-  $blue
-  preValue={pre}
-/>
-      </CardsWrapper>
-<br />
-      {pre > post && <p>Save ₹{(pre - post).toFixed(2)}</p>}
+        <CardsWrapper>
+          <PreCard data={cg} title="Pre Harvesting" />
+          <CapitalCard
+            data={afterCg}
+            title="After Harvesting"
+            $blue
+            preValue={pre}
+          />
+        </CardsWrapper>
+        <br />
+        {pre > post && <p>Save ₹{(pre - post).toFixed(2)}</p>}
 
-      <SearchInput
-  placeholder="Search assets..."
-  onChange={(e) => setSearch(e.target.value)}
-/>
+        <SearchInput
+          placeholder="Search assets..."
+          onChange={(e) => setSearch(e.target.value)}
+        />
 
-      <HoldingsTable
-        data={filtered}
-        selected={selected}
-        setSelected={setSelected}
-        sortKey={sortKey}
-        sortOrder={sortOrder}
-        setSortKey={setSortKey}
-        setSortOrder={setSortOrder}
-      />
-    </Container>
+        <HoldingsTable
+          data={filtered.slice(0, visibleCount)}
+          selected={selected}
+          setSelected={setSelected}
+          sortKey={sortKey}
+          sortOrder={sortOrder}
+          setSortKey={setSortKey}
+          setSortOrder={setSortOrder}
+        />
+        {filtered.length > 6 && (
+          <ShowMoreBtn
+            onClick={() =>
+              setVisibleCount(
+                visibleCount === 6 ? filtered.length : 6
+              )
+            }
+          >
+            {visibleCount === 6 ? "Show More ↓" : "Show Less ↑"}
+          </ShowMoreBtn>
+        )}
+      </Container>
+    </>
   );
 }

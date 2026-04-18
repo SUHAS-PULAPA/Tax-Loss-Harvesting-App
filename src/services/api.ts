@@ -395,7 +395,7 @@ export const fetchHoldings = async () => {
                 "averageBuyPrice": 8.531798889329416e-7,
                 "stcg": {
                 "balance": 8.861,
-                "gain": 1.1043562716520403e-7
+                "gain": -1.1043562716520403
                 },
                 "ltcg": {
                 "balance": 0,

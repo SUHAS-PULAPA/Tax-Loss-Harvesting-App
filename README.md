@@ -1,77 +1,77 @@
-<<<<<<< HEAD
-# Tax-Loss-Harvesting-App
-=======
-# React + TypeScript + Vite
+# Tax Loss Harvesting App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A React + TypeScript + Vite dashboard for visualizing tax-loss harvesting opportunities across a crypto portfolio.
 
-Currently, two official plugins are available:
+## Intro
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+This application helps users identify potential savings from tax-loss harvesting by comparing current capital gains before and after selected asset adjustments. It combines portfolio holdings data with capital gain summaries to show how choosing positions can impact taxable gains.
 
-## React Compiler
+## Summary
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Key functionality:
 
-## Expanding the ESLint configuration
+- Display portfolio holdings in a sortable, searchable table
+- Allow selecting individual assets or selecting all assets
+- Recalculate "after harvesting" capital gains based on selected holdings
+- Show estimated savings if harvesting improves the tax position
+- Present short-term and long-term capital gain summaries in card format
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Main project structure:
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- `src/App.tsx` — core application state, data fetching, and selection logic
+- `src/components/HoldingsTable.tsx` — table with asset rows, checkboxes, and sorting
+- `src/components/CapitalCard.tsx` — after-harvest summary card
+- `src/components/PreCard.tsx` — pre-harvest summary card
+- `src/services/api.ts` — mock data fetch functions for holdings and capital gains
+- `src/utils/calculations.ts` — utility functions for calculating realised gains
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Running the Application
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Requirements
+
+- Node.js (16+ recommended)
+- npm
+
+### Install dependencies
+
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Start development server
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run dev
 ```
->>>>>>> 1ff83b5 (Initial commit - Tax Loss Harvesting App)
+
+Then open the local URL shown in the terminal (usually `http://localhost:5173`).
+
+### Build for production
+
+```bash
+npm run build
+```
+
+### Preview production build
+
+```bash
+npm run preview
+```
+
+## Usage
+
+1. Open the app in the browser
+2. Use the search box to filter assets by symbol
+3. Click column headers to sort by asset, holdings, price, or gains
+4. Check asset rows or the top checkbox to select all
+5. Observe the capital gain summary cards and the savings estimate when selected assets improve the post-harvest position
+
+## Notes
+
+- Savings appear only when after-harvesting realised gains are lower than pre-harvest realised gains
+- For example, click on the checkbox of TITAN coin to view the savings text.
+- Sample data is currently mocked in `src/services/api.ts`
+
+## License
+
+This repository is provided as-is for demo and learning purposes.
